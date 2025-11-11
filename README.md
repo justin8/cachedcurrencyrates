@@ -1,14 +1,24 @@
-# Welcome to your CDK TypeScript project
+# Cached Currency Rates
 
-This is a blank project for CDK development with TypeScript.
+A caching proxy for the OpenExchangeRates API using AWS CDK.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+## Architecture
 
-## Useful commands
+- API Gateway v2 HTTP API
+- Python Lambda function (Python 3.12)
+- DynamoDB table for caching (2 RCU/WCU)
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `npx cdk deploy`  deploy this stack to your default AWS account/region
-* `npx cdk diff`    compare deployed stack with current state
-* `npx cdk synth`   emits the synthesized CloudFormation template
+## Features
+
+- Caches responses for `/api/historical/*` endpoints
+- Forwards all other requests without caching
+- Uses request path + parameters hash as cache key
+- Returns `X-Cache: HIT` or `X-Cache: MISS` headers
+
+## Deployment
+
+```bash
+npx cdk deploy
+```
+
+The API URL will be output after deployment.
