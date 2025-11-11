@@ -79,10 +79,11 @@ def handler(event, context):
             upstream_url, headers={"accept": "application/json"}
         )
         with urllib.request.urlopen(req) as response:
+            status_code = response.getcode()
             data = response.read().decode("utf-8")
 
-            # Cache if applicable
-            if should_cache:
+            # Only cache if the response is successful or no data
+            if should_cache and status_code in (200, 400):
                 try:
                     table.put_item(
                         Item={
@@ -94,7 +95,7 @@ def handler(event, context):
                     print(f"Cache write error: {e}")
 
             return {
-                "statusCode": 200,
+                "statusCode": status_code,
                 "body": data,
                 "headers": {
                     "Content-Type": "application/json",
