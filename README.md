@@ -1,6 +1,6 @@
 # Cached Currency Rates
 
-A caching proxy for the OpenExchangeRates API using AWS CDK.
+A caching proxy for currency rate APIs using AWS CDK.
 
 ## Architecture
 
@@ -8,12 +8,29 @@ A caching proxy for the OpenExchangeRates API using AWS CDK.
 - Python Lambda function (Python 3.12)
 - DynamoDB table for caching (2 RCU/WCU)
 
+## Supported APIs
+
+- `openexchangerates.org` - All endpoints
+- `api.twelvedata.com` - All endpoints
+
+Requests to other domains will return 403 Forbidden.
+
 ## Features
 
-- Caches responses for `/api/historical/*` endpoints
+- Caches responses for:
+  - `openexchangerates.org/api/historical/*`
+  - `api.twelvedata.com/eod/*`
 - Forwards all other requests without caching
 - Uses request path + parameters hash as cache key
 - Returns `X-Cache: HIT` or `X-Cache: MISS` headers
+
+## Usage
+
+Include the domain in the path:
+
+```
+https://your-api.execute-api.region.amazonaws.com/openexchangerates.org/api/historical/2025-01-01.json?app_id=xxx&base=USD&symbols=AUD
+```
 
 ## Deployment
 
